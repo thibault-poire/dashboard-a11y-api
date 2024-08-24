@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsArray,
   IsNotEmpty,
@@ -15,6 +16,7 @@ export class CreateCollectionDto {
 
   @IsArray()
   @IsOptional()
-  @ValidateNested()
+  @ValidateNested({ each: true })
+  @Type(() => CreateUrlDto)
   urls: CreateUrlDto[];
 }

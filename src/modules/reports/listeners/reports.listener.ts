@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
-import { ReportsService } from '../reports.service';
-
-import { Report } from 'src/mongoose/schemas/report.schema';
+import { CreateReportDto } from '../dto/create-report.dto';
 
 @Injectable()
 export class ReportsListener {
@@ -11,18 +11,24 @@ export class ReportsListener {
 
   constructor(
     private readonly event_emitter: EventEmitter2,
-    private readonly reports_service: ReportsService,
+    @InjectModel(Report.name) private readonly report_model: Model<Report>,
   ) {}
 
-  @OnEvent('audit.completed')
-  async handle_reports_created(event: Report[]) {
-    const reports = await this.reports_service.create_many_report(event);
+  @OnEvent('audits.completed')
+  async handle_audits_completed(reports: CreateReportDto[]) {
+    await this.report_model.insertMany(reports);
 
-    this.event_emitter.emit(
-      'reports.created',
-      reports.map(({ _id: report_id, url_id }) => ({ report_id, url_id })),
-    );
+    this.event_emitter.emit('reports.created', reports);
 
     this.logger.log('"audit.completed" event completed');
+  }
+
+  @OnEvent('collection_urls.deleted')
+  async handle_collection_urls_deleted(collection_id: string) {
+    await this.report_model.deleteMany({
+      collection_id: collection_id,
+    });
+
+    this.logger.log('"collection.deleted" event completed');
   }
 }

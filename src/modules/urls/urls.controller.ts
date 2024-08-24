@@ -66,8 +66,7 @@ export class UrlsController {
     );
   }
 
-  @Delete()
-  @HttpCode(204)
+  @Delete(':url_id')
   delete_collection_url(
     @Param('collection_id') collection_id: string,
     @Param('url_id') url_id: string,

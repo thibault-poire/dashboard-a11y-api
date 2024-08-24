@@ -6,10 +6,12 @@ import { Collection } from 'src/mongoose/schemas/collection.schema';
 
 import { CreateCollectionDto } from './dto/create-collection-dto';
 import { UpdateCollectionDto } from './dto/update-collection.dto';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class CollectionsService {
   constructor(
+    private readonly event_emitter: EventEmitter2,
     @InjectModel(Collection.name) private collection_model: Model<Collection>,
   ) {}
 
@@ -22,6 +24,8 @@ export class CollectionsService {
       await this.collection_model.findByIdAndDelete(collection_id);
 
     if (collection) {
+      this.event_emitter.emit('collection_urls.deleted', collection_id);
+
       return collection;
     }
 
@@ -39,9 +43,7 @@ export class CollectionsService {
   }
 
   async get_collections() {
-    const collections = await this.collection_model
-      .find()
-      .populate('urls.reports');
+    const collections = await this.collection_model.find();
 
     if (collections?.length) {
       return collections;
@@ -54,12 +56,14 @@ export class CollectionsService {
     const collection = await this.collection_model.findByIdAndUpdate(
       collection_id,
       updates,
-      {
-        new: true,
-      },
+      { new: true },
     );
 
     if (collection) {
+      if (updates?.urls) {
+        this.event_emitter.emit('collection_urls.deleted', collection_id);
+      }
+
       return collection;
     }
 

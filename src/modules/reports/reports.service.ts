@@ -1,34 +1,29 @@
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Model } from 'mongoose';
+
 import { AuditService } from 'src/modules/audits/audit.service';
 
 import { Report } from 'src/mongoose/schemas/report.schema';
 
-import { CreateReportDto } from './dto/create-report.dto';
-
 @Injectable()
 export class ReportsService {
   constructor(
-    @InjectModel(Report.name) private report_model: Model<Report>,
-
-    @Inject(forwardRef(() => AuditService))
+    private readonly event_emitter: EventEmitter2,
+    @InjectModel(Report.name) private readonly report_model: Model<Report>,
     private readonly audit_service: AuditService,
   ) {}
 
-  async create_many_report(reports: CreateReportDto[]) {
-    return await this.report_model.insertMany(reports);
-  }
-
   async delete_report(report_id: string) {
-    const report = this.report_model.findByIdAndDelete(report_id);
+    const report = await this.report_model.findByIdAndDelete(report_id);
 
     if (report) {
+      this.event_emitter.emit('report.deleted', {
+        url_id: report.url_id.toString(),
+        report_id,
+      });
+
       return report;
     }
 
