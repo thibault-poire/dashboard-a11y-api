@@ -5,6 +5,8 @@ import { Model } from 'mongoose';
 
 import { CreateReportDto } from '../dto/create-report.dto';
 
+import { Report } from 'src/mongoose/schemas/report.schema';
+
 @Injectable()
 export class ReportsListener {
   private logger = new Logger(ReportsListener.name);
