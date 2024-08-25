@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 import { CreateReportDto } from '../dto/create-report.dto';
 
@@ -17,8 +17,8 @@ export class ReportsListener {
   ) {}
 
   @OnEvent('audits.completed')
-  async handle_audits_completed(reports: CreateReportDto[]) {
-    await this.report_model.insertMany(reports);
+  async handle_audits_completed(audit: CreateReportDto[]) {
+    const reports = await this.report_model.insertMany(audit);
 
     this.event_emitter.emit('reports.created', reports);
 
@@ -28,7 +28,7 @@ export class ReportsListener {
   @OnEvent('collection_urls.deleted')
   async handle_collection_urls_deleted(collection_id: string) {
     await this.report_model.deleteMany({
-      collection_id: collection_id,
+      collection_id: new Types.ObjectId(collection_id),
     });
 
     this.logger.log('"collection.deleted" event completed');

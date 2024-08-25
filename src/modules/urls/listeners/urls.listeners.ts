@@ -17,15 +17,25 @@ export class UrlsListener {
 
   @OnEvent('reports.created')
   async handle_reports_created(reports: ReportDocument[]) {
-    for (let index = 0; index < reports.length; index++) {
-      const { _id, url_id } = reports[index];
+    let total_errors = 0;
 
-      this.collection_model.findOneAndUpdate(
+    for (let index = 0; index < reports.length; index++) {
+      const { _id, url_id, violations } = reports[index];
+
+      total_errors += violations.length;
+
+      await this.collection_model.findOneAndUpdate(
         { 'urls._id': url_id },
         { $push: { 'urls.$.reports': _id } },
         { new: true },
       );
     }
+
+    const [{ collection_id }] = reports;
+
+    await this.collection_model.findByIdAndUpdate(collection_id, {
+      $set: { 'last_report.total_errors': total_errors },
+    });
 
     this.logger.log('"reports.created" event completed');
   }

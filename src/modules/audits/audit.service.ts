@@ -27,23 +27,21 @@ export class AuditService {
     if (urls?.length) {
       const timer_start = performance.now();
 
-      this.puppeteer_service
-        .create_axe_report(urls, signal)
-        .then(async (reports) => {
-          this.event_emitter.emit(
-            'audits.completed',
-            reports.map((report) => ({
-              ...report,
-              collection_id: new Types.ObjectId(collection_id),
-            })),
-          );
+      this.puppeteer_service.create_axe_report(urls, signal).then((audits) => {
+        this.event_emitter.emit(
+          'audits.completed',
+          audits.map((report) => ({
+            ...report,
+            collection_id: new Types.ObjectId(collection_id),
+          })),
+        );
 
-          const timer_end = performance.now();
+        const timer_end = performance.now();
 
-          this.logger.log(
-            `Audit for collection "${collection_id}" completed in ${(timer_end - timer_start).toFixed()}ms`,
-          );
-        });
+        this.logger.log(
+          `Audit for collection "${collection_id}" completed in ${((timer_end - timer_start) / 1000).toFixed(1)}s`,
+        );
+      });
 
       return;
     }
