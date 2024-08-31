@@ -4,7 +4,12 @@ import { ValidationPipe } from '@nestjs/common';
 import * as compression from 'compression';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    cors: {
+      origin: 'http://localhost:4200',
+      methods: 'GET, POST, PUT, DELETE',
+    },
+  });
 
   app.use(compression());
 
