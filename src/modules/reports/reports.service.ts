@@ -7,6 +7,9 @@ import { AuditService } from 'src/modules/audits/audit.service';
 
 import { Report } from 'src/mongoose/schemas/report.schema';
 
+import { FieldsDto } from './dto/fields.dto';
+import { FiltersDto } from 'src/shared/dto/filters.dto';
+
 @Injectable()
 export class ReportsService {
   constructor(
@@ -40,8 +43,8 @@ export class ReportsService {
     throw new NotFoundException();
   }
 
-  async get_reports() {
-    const reports = await this.report_model.find();
+  async get_reports(filters: FiltersDto, fields: FieldsDto) {
+    const reports = await this.report_model.find(filters, fields);
 
     if (reports?.length) {
       return reports;
