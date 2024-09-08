@@ -27,7 +27,7 @@ export class AuditService {
     if (urls?.length) {
       const timer_start = performance.now();
 
-      this.puppeteer_service.create_axe_report(urls, signal).then((audits) => {
+      this.puppeteer_service.create_axe_reports(urls, signal).then((audits) => {
         this.event_emitter.emit(
           'audits.completed',
           audits.map((report) => ({

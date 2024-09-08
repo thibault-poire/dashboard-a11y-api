@@ -1,6 +1,5 @@
 import { Type } from 'class-transformer';
 import {
-  IsArray,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -14,7 +13,6 @@ export class CreateCollectionDto {
   @IsNotEmpty()
   name: string;
 
-  @IsArray()
   @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => CreateUrlDto)

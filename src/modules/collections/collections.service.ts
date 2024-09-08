@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { Collection } from 'src/mongoose/schemas/collection.schema';
 
 import { CreateCollectionDto } from './dto/create-collection-dto';
 import { UpdateCollectionDto } from './dto/update-collection.dto';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class CollectionsService {

@@ -48,7 +48,7 @@ export class UrlsListener {
     url_id: string;
     report_id: string;
   }) {
-    this.collection_model.findOneAndUpdate(
+    await this.collection_model.findOneAndUpdate(
       { 'urls._id': url_id },
       { $pull: { 'urls.$.reports': report_id } },
     );
