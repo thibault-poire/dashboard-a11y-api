@@ -8,45 +8,40 @@ import { AxeResults } from 'axe-core';
 
 @Injectable()
 export class PuppeteerService {
-  create_axe_reports(urls: UrlDocument[], signal: AbortSignal) {
-    return new Promise<Omit<Report, 'collection_id'>[]>(
-      async (resolve, reject) => {
-        signal.addEventListener(
-          'abort',
-          () => {
-            reject();
-          },
-          { once: true },
-        );
+  create_axe_audit(urls: UrlDocument[], signal: AbortSignal) {
+    return new Promise<Report[]>(async (resolve, reject) => {
+      signal.addEventListener(
+        'abort',
+        () => {
+          reject();
+        },
+        { once: true },
+      );
 
-        try {
-          const browser = await puppeteer.launch();
-          const page = await browser.newPage();
+      try {
+        const browser = await puppeteer.launch();
+        const page = await browser.newPage();
 
-          const reports = [];
+        const audit = [];
 
-          for (let index = 0; index < urls.length; index++) {
-            const { _id: url_id, url } = urls[index];
+        for (let index = 0; index < urls.length; index++) {
+          const { url } = urls[index];
 
-            await page.goto(url);
+          await page.goto(url);
 
-            const report = await new AxePuppeteer(page).analyze();
-            const formatted_report = this.format_report(report);
+          const report = await new AxePuppeteer(page).analyze();
+          const formatted_report = this.format_report(report);
 
-            reports.push({
-              ...formatted_report,
-              url_id,
-            });
-          }
-
-          await browser.close();
-
-          resolve(reports);
-        } catch (error) {
-          reject(error);
+          audit.push(formatted_report);
         }
-      },
-    );
+
+        await browser.close();
+
+        resolve(audit);
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 
   format_report(report: AxeResults) {

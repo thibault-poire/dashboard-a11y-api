@@ -6,6 +6,7 @@ import { ReportDocument } from './report.schema';
 export type UrlDocument = HydratedDocument<Url>;
 
 @Schema({
+  _id: false,
   strict: 'throw',
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })

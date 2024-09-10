@@ -1,7 +1,8 @@
-import { IsArray, IsOptional } from 'class-validator';
+import { IsArray, IsMongoId, IsOptional } from 'class-validator';
 
 export class OperatorsDto {
-  @IsArray()
   @IsOptional()
+  @IsArray()
+  @IsMongoId({ each: true })
   $in: string[];
 }

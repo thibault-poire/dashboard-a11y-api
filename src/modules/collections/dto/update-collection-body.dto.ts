@@ -1,8 +1,8 @@
 import { IsArray, IsOptional, IsString } from 'class-validator';
 
-import { UpdateUrlDto } from 'src/modules/urls/dto/update-url.dto';
+import { UpdateUrlDto } from './update-url.dto';
 
-export class UpdateCollectionDto {
+export class UpdateCollectionBodyDto {
   @IsString()
   @IsOptional()
   name: string;

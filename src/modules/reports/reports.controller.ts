@@ -13,20 +13,14 @@ import { MongooseExceptionFilter } from 'src/shared/filters/mongoose-exception.f
 
 import { ReportsService } from './reports.service';
 
-import { FieldsDto } from './dto/fields.dto';
-import { FiltersDto } from 'src/shared/dto/filters.dto';
-
 @Controller()
 @UseFilters(MongooseExceptionFilter)
 export class ReportsController {
   constructor(private readonly reports_service: ReportsService) {}
 
   @Get()
-  get_reports(
-    @Query('filters') filters: FiltersDto,
-    @Query('fields') fields: FieldsDto,
-  ) {
-    return this.reports_service.get_reports(filters, fields);
+  get_reports() {
+    return this.reports_service.get_reports();
   }
 
   @Post()

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 
 export type ReportDocument = HydratedDocument<Report>;
 
@@ -8,9 +8,6 @@ export type ReportDocument = HydratedDocument<Report>;
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })
 export class Report {
-  @Prop()
-  collection_id: mongoose.Types.ObjectId;
-
   @Prop({ type: [Array] })
   inapplicable: object[][];
 
@@ -19,9 +16,6 @@ export class Report {
 
   @Prop({ type: [Array] })
   passes: object[][];
-
-  @Prop({ required: true })
-  url_id: mongoose.Types.ObjectId;
 
   @Prop({ type: [Array] })
   violations: object[][];

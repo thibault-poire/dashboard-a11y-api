@@ -7,9 +7,6 @@ import { AuditService } from 'src/modules/audits/audit.service';
 
 import { Report } from 'src/mongoose/schemas/report.schema';
 
-import { FieldsDto } from './dto/fields.dto';
-import { FiltersDto } from 'src/shared/dto/filters.dto';
-
 @Injectable()
 export class ReportsService {
   constructor(
@@ -22,10 +19,7 @@ export class ReportsService {
     const report = await this.report_model.findByIdAndDelete(report_id);
 
     if (report) {
-      this.event_emitter.emit('report.deleted', {
-        url_id: report.url_id.toString(),
-        report_id,
-      });
+      this.event_emitter.emit('report.deleted', report_id);
 
       return report;
     }
@@ -43,8 +37,8 @@ export class ReportsService {
     throw new NotFoundException();
   }
 
-  async get_reports(filters: FiltersDto, fields: FieldsDto) {
-    const reports = await this.report_model.find(filters, fields);
+  async get_reports() {
+    const reports = await this.report_model.find();
 
     if (reports?.length) {
       return reports;

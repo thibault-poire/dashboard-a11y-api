@@ -4,10 +4,9 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { Types } from 'mongoose';
 
-import { UrlsService } from '../urls/urls.service';
 import { PuppeteerService } from '../puppeteer/puppeteer.service';
+import { CollectionsService } from '../collections/collections.service';
 
 @Injectable()
 export class AuditService {
@@ -15,33 +14,30 @@ export class AuditService {
 
   constructor(
     private readonly event_emitter: EventEmitter2,
-    private readonly urls_service: UrlsService,
+    private readonly collection_service: CollectionsService,
     private readonly puppeteer_service: PuppeteerService,
   ) {}
 
   async collection_audit(collection_id: string) {
     const abort_controller = new AbortController();
     const signal = abort_controller.signal;
-    const urls = await this.urls_service.get_collection_urls(collection_id);
+    const collection =
+      await this.collection_service.get_collection(collection_id);
 
-    if (urls?.length) {
+    if (collection.urls?.length) {
       const timer_start = performance.now();
 
-      this.puppeteer_service.create_axe_reports(urls, signal).then((audits) => {
-        this.event_emitter.emit(
-          'audits.completed',
-          audits.map((report) => ({
-            ...report,
-            collection_id: new Types.ObjectId(collection_id),
-          })),
-        );
+      this.puppeteer_service
+        .create_axe_audit(collection.urls, signal)
+        .then((audit) => {
+          const timer_end = performance.now();
 
-        const timer_end = performance.now();
+          this.logger.log(
+            `Audit for collection "${collection_id}" completed in ${((timer_end - timer_start) / 1000).toFixed(1)}s`,
+          );
 
-        this.logger.log(
-          `Audit for collection "${collection_id}" completed in ${((timer_end - timer_start) / 1000).toFixed(1)}s`,
-        );
-      });
+          this.event_emitter.emit('audit.completed', audit, collection);
+        });
 
       return;
     }

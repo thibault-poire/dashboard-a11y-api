@@ -5,7 +5,6 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { CollectionsModule } from './modules/collections/collections.module';
-import { UrlsModule } from './modules/urls/urls.module';
 import { ReportsModule } from './modules/reports/reports.module';
 
 import { AppController } from './app.controller';
@@ -23,15 +22,9 @@ import { AppService } from './app.service';
 
     CollectionsModule,
     ReportsModule,
-    UrlsModule,
 
     RouterModule.register([
-      {
-        path: 'collections',
-        module: CollectionsModule,
-        children: [{ path: '/:collection_id/urls', module: UrlsModule }],
-      },
-
+      { path: 'collections', module: CollectionsModule },
       { path: 'reports', module: ReportsModule },
     ]),
   ],

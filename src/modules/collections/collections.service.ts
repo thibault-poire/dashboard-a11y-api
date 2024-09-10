@@ -5,8 +5,10 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { Collection } from 'src/mongoose/schemas/collection.schema';
 
-import { CreateCollectionDto } from './dto/create-collection-dto';
-import { UpdateCollectionDto } from './dto/update-collection.dto';
+import { CreateCollectionBodyDto } from './dto/create-collection-body.dto';
+import { QueryCollectionsDto } from './dto/query-collections.dto';
+import { UpdateCollectionBodyDto } from './dto/update-collection-body.dto';
+import { create_populate_options } from 'src/shared/helpers/create-populate-options';
 
 @Injectable()
 export class CollectionsService {
@@ -15,7 +17,7 @@ export class CollectionsService {
     @InjectModel(Collection.name) private collection_model: Model<Collection>,
   ) {}
 
-  async create_collection(collection: CreateCollectionDto) {
+  async create_collection(collection: CreateCollectionBodyDto) {
     return await this.collection_model.create(collection);
   }
 
@@ -24,7 +26,7 @@ export class CollectionsService {
       await this.collection_model.findByIdAndDelete(collection_id);
 
     if (collection) {
-      this.event_emitter.emit('collection_urls.deleted', collection_id);
+      this.event_emitter.emit('collection_urls.deleted', collection);
 
       return collection;
     }
@@ -32,8 +34,15 @@ export class CollectionsService {
     throw new NotFoundException();
   }
 
-  async get_collection(collection_id: string) {
-    const collection = await this.collection_model.findById(collection_id);
+  async get_collection(collection_id: string, query?: QueryCollectionsDto) {
+    const populate_options = create_populate_options(
+      'urls.reports',
+      query.populate,
+    );
+
+    const collection = await this.collection_model
+      .findById(collection_id)
+      .populate(populate_options);
 
     if (collection) {
       return collection;
@@ -42,8 +51,15 @@ export class CollectionsService {
     throw new NotFoundException();
   }
 
-  async get_collections() {
-    const collections = await this.collection_model.find();
+  async get_collections(query?: QueryCollectionsDto) {
+    const populate_options = create_populate_options(
+      'urls.reports',
+      query.populate,
+    );
+
+    const collections = await this.collection_model
+      .find()
+      .populate(populate_options);
 
     if (collections?.length) {
       return collections;
@@ -52,19 +68,21 @@ export class CollectionsService {
     throw new NotFoundException();
   }
 
-  async update_collection(collection_id: string, updates: UpdateCollectionDto) {
+  async update_collection(
+    collection_id: string,
+    updates: UpdateCollectionBodyDto,
+  ) {
     const collection = await this.collection_model.findByIdAndUpdate(
       collection_id,
       updates,
-      { new: true },
     );
 
     if (collection) {
       if (updates?.urls) {
-        this.event_emitter.emit('collection_urls.deleted', collection_id);
+        this.event_emitter.emit('collection_urls.deleted', collection);
       }
 
-      return collection;
+      return await this.get_collection(collection_id);
     }
 
     throw new NotFoundException();

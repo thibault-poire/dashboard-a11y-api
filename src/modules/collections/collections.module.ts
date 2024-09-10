@@ -9,9 +9,12 @@ import {
   Collection,
   collection_schema,
 } from 'src/mongoose/schemas/collection.schema';
+import { CollectionsListener } from './collections.listener';
 
 @Module({
   controllers: [CollectionsController],
+
+  exports: [CollectionsService],
 
   imports: [
     MongooseModule.forFeature([
@@ -19,6 +22,6 @@ import {
     ]),
   ],
 
-  providers: [CollectionsService],
+  providers: [CollectionsListener, CollectionsService],
 })
 export class CollectionsModule {}

@@ -6,9 +6,9 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-import { CreateUrlDto } from 'src/modules/urls/dto/create-url.dto';
+import { CreateUrlDto } from './create-url.dto';
 
-export class CreateCollectionDto {
+export class CreateCollectionBodyDto {
   @IsString()
   @IsNotEmpty()
   name: string;
