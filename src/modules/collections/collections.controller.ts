@@ -5,55 +5,36 @@ import {
   Get,
   HttpCode,
   Param,
-  Patch,
   Post,
-  Query,
   UseFilters,
 } from '@nestjs/common';
 
-import { MongooseExceptionFilter } from 'src/shared/filters/mongoose-exception.filter';
-
 import { CollectionsService } from './collections.service';
 
-import { CreateCollectionBodyDto } from './dto/create-collection-body.dto';
-import { QueryCollectionsDto } from './dto/query-collections.dto';
-import { UpdateCollectionBodyDto } from './dto/update-collection-body.dto';
+import { MongooseExceptionFilter } from 'src/shared/filters/mongoose-exception.filter';
+
+import { DeleteParamsDto } from './dto/delete-params.dto';
+import { CreateBodyDto } from './dto/create-body.dto';
 
 @Controller()
 @UseFilters(MongooseExceptionFilter)
 export class CollectionsController {
-  constructor(private readonly collections_service: CollectionsService) {}
-
-  @Get()
-  get_collections(@Query() query: QueryCollectionsDto) {
-    return this.collections_service.get_collections(query);
-  }
+  constructor(private collections_service: CollectionsService) {}
 
   @Post()
   @HttpCode(201)
-  create_collection(@Body() collection: CreateCollectionBodyDto) {
-    return this.collections_service.create_collection(collection);
+  create_collection(@Body() collection: CreateBodyDto) {
+    return this.collections_service.create_one(collection);
   }
 
-  @Get(':id')
-  get_collection(
-    @Param('id') collection_id: string,
-    @Query() query: QueryCollectionsDto,
-  ) {
-    return this.collections_service.get_collection(collection_id, query);
-  }
-
-  @Patch(':id')
-  update_collection(
-    @Param('id') collection_id: string,
-    @Body() updates: UpdateCollectionBodyDto,
-  ) {
-    return this.collections_service.update_collection(collection_id, updates);
-  }
-
-  @Delete(':id')
+  @Delete(':collection_id')
   @HttpCode(204)
-  delete_collection(@Param('id') collection_id: string) {
-    return this.collections_service.delete_collection(collection_id);
+  delete_collection(@Param() params: DeleteParamsDto) {
+    return this.collections_service.delete_one(params);
+  }
+
+  @Get()
+  get_collections() {
+    return this.collections_service.get_many();
   }
 }

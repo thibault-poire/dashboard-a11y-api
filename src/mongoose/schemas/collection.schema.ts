@@ -1,7 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
 
-import { url_schema, UrlDocument } from './url.schema';
+import mongoose, { HydratedDocument } from 'mongoose';
+
+import { UrlDocument } from './url.schema';
 
 export type CollectionDocument = HydratedDocument<Collection>;
 
@@ -13,7 +14,7 @@ export class Collection {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ type: [url_schema] })
+  @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: 'Url' }])
   urls: UrlDocument[];
 }
 

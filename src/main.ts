@@ -21,8 +21,6 @@ async function bootstrap() {
     }),
   );
 
-  app.setGlobalPrefix('api', { exclude: [''] });
-
   await app.listen(process.env.SERVER_PORT);
 }
 

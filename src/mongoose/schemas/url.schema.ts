@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+
 import mongoose, { HydratedDocument } from 'mongoose';
 
 import { ReportDocument } from './report.schema';
@@ -6,7 +7,6 @@ import { ReportDocument } from './report.schema';
 export type UrlDocument = HydratedDocument<Url>;
 
 @Schema({
-  _id: false,
   strict: 'throw',
   timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
 })

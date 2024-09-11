@@ -1,53 +1,29 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+
 import { Model } from 'mongoose';
 
-import { AuditService } from 'src/modules/audits/audit.service';
+import { Report, ReportDocument } from 'src/mongoose/schemas/report.schema';
+import { Url } from 'src/mongoose/schemas/url.schema';
 
-import { Report } from 'src/mongoose/schemas/report.schema';
-
+import { GetParamsDto } from './dto/get-params.dto';
 @Injectable()
 export class ReportsService {
   constructor(
-    private readonly event_emitter: EventEmitter2,
-    @InjectModel(Report.name) private readonly report_model: Model<Report>,
-    private readonly audit_service: AuditService,
+    @InjectModel(Report.name) private report_model: Model<ReportDocument>,
+    @InjectModel(Url.name) private url_model: Model<Url>,
   ) {}
+  async get_many({ url_id }: GetParamsDto) {
+    const url = await this.url_model.findById(
+      url_id,
+      { _id: 0, reports: 1 },
+      { populate: 'reports' },
+    );
 
-  async delete_report(report_id: string) {
-    const report = await this.report_model.findByIdAndDelete(report_id);
-
-    if (report) {
-      this.event_emitter.emit('report.deleted', report_id);
-
-      return report;
+    if (url.reports?.length) {
+      return url.reports;
     }
 
     throw new NotFoundException();
-  }
-
-  async get_report(report_id: string) {
-    const report = await this.report_model.findById(report_id);
-
-    if (report) {
-      return report;
-    }
-
-    throw new NotFoundException();
-  }
-
-  async get_reports() {
-    const reports = await this.report_model.find();
-
-    if (reports?.length) {
-      return reports;
-    }
-
-    throw new NotFoundException();
-  }
-
-  async start_audit(collection_id: string) {
-    return await this.audit_service.collection_audit(collection_id);
   }
 }
