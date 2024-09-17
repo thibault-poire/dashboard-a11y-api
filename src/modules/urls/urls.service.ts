@@ -6,10 +6,10 @@ import { Model } from 'mongoose';
 import { Collection } from 'src/mongoose/schemas/collection.schema';
 import { Url } from 'src/mongoose/schemas/url.schema';
 
+import { CreateBodyDto } from './dto/create-body.dto';
 import { CreateParamsDto } from './dto/create-params.dto';
 import { DeleteParamsDto } from './dto/delete-params.dto';
 import { GetParamsDto } from './dto/get-params.dto';
-import { CreateBodyDto } from './dto/create-body.dto';
 
 @Injectable()
 export class UrlsService {
@@ -19,11 +19,10 @@ export class UrlsService {
   ) {}
 
   async get_many({ collection_id }: GetParamsDto) {
-    const collection = await this.collection_model.findById(
-      collection_id,
-      { urls: 1, _id: 0 },
-      { populate: 'urls' },
-    );
+    const collection = await this.collection_model.findById(collection_id, {
+      urls: 1,
+      _id: 0,
+    });
 
     if (collection.urls.length) {
       return collection.urls;

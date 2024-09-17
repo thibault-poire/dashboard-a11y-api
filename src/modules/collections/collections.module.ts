@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { CollectionsController } from './collections.controller';
 
+import { FilterService } from 'src/shared/services/filter.service';
 import { CollectionsService } from './collections.service';
 
 import {
@@ -19,6 +20,6 @@ import {
     ]),
   ],
 
-  providers: [CollectionsService],
+  providers: [CollectionsService, FilterService],
 })
 export class CollectionsModule {}
