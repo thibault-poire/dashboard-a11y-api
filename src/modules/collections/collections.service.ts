@@ -9,7 +9,7 @@ import { FilterService } from 'src/shared/services/filter.service';
 
 import { CreateBodyDto } from './dto/create-body.dto';
 import { DeleteParamsDto } from './dto/delete-params.dto';
-import { GetQueryparamsDto } from '../urls/dto/get-queryparams.dto';
+import { GetQueryparamsDto } from './dto/get-queryparams.dto';
 
 @Injectable()
 export class CollectionsService {

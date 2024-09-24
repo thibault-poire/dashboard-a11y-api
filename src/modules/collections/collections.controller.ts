@@ -16,7 +16,7 @@ import { MongooseExceptionFilter } from 'src/shared/filters/mongoose-exception.f
 
 import { DeleteParamsDto } from './dto/delete-params.dto';
 import { CreateBodyDto } from './dto/create-body.dto';
-import { GetQueryparamsDto } from '../urls/dto/get-queryparams.dto';
+import { GetQueryparamsDto } from './dto/get-queryparams.dto';
 
 @Controller()
 @UseFilters(MongooseExceptionFilter)

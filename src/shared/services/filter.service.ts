@@ -28,7 +28,16 @@ export class FilterService {
     }
 
     const [path] = Object.keys(populate);
-    const { select, limit, skip, sort } = populate[path];
+
+    const {
+      select,
+      limit,
+      populate: sub_populate,
+      skip,
+      sort,
+    } = populate[path];
+
+    const sub_populate_options = this.get_populate_options(sub_populate);
 
     return {
       path,
@@ -40,6 +49,7 @@ export class FilterService {
           [sort.replace('-', '')]: sort.startsWith('-') ? -1 : 1,
         },
       },
+      populate: sub_populate_options,
     };
   }
 }

@@ -9,26 +9,26 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-import { GetQueryparamsDto as ReportsGetQueryparamsDto } from 'src/modules/reports/dto/get-queryparams.dto';
+import { GetQueryparamsDto as UrlsGetQueryparamsDto } from 'src/modules/urls/dto/get-queryparams.dto';
 
 enum SelectEnum {
   '-_id' = '-_id',
   '-created_at' = '-created_at',
-  '-url' = '-url',
-  '-reports' = '-reports',
+  '-name' = '-name',
   '-updated_at' = '-updated_at',
+  '-urls' = '-urls',
   _id = '_id',
   created_at = 'created_at',
-  reports = 'reports',
+  name = 'name',
   updated_at = 'updated_at',
-  url = 'url',
+  urls = 'urls',
 }
 
 class GetQueryparamsPopulateDto {
   @ValidateIf((_, value) => value)
-  @Type(() => ReportsGetQueryparamsDto)
+  @Type(() => UrlsGetQueryparamsDto)
   @ValidateNested()
-  reports: ReportsGetQueryparamsDto;
+  urls: UrlsGetQueryparamsDto;
 }
 
 export class GetQueryparamsDto {
