@@ -26,10 +26,16 @@ export class CollectionsService {
     if (body.urls?.length) {
       const urls = await this.url_model.create(body.urls);
 
-      return await this.collection_model.create({
+      const collection = await this.collection_model.create({
         ...body,
         urls: urls.map(({ _id }) => _id),
       });
+
+      return await this.collection_model.findById(
+        collection.id,
+        {},
+        { populate: 'urls' },
+      );
     }
 
     return await this.collection_model.create(body);
