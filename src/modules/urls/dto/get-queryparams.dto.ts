@@ -28,7 +28,7 @@ class GetQueryparamsPopulateDto {
   @ValidateIf((_, value) => value)
   @Type(() => ReportsGetQueryparamsDto)
   @ValidateNested()
-  reports: ReportsGetQueryparamsDto;
+  reports: ReportsGetQueryparamsDto[];
 }
 
 export class GetQueryparamsDto {

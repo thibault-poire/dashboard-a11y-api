@@ -13,6 +13,7 @@ export class ReportsService {
     @InjectModel(Report.name) private report_model: Model<ReportDocument>,
     @InjectModel(Url.name) private url_model: Model<Url>,
   ) {}
+
   async get_many({ url_id }: GetParamsDto) {
     const url = await this.url_model.findById(
       url_id,
