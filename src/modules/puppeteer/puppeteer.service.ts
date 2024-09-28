@@ -29,6 +29,7 @@ export class PuppeteerService {
           await page.goto(url);
 
           const audit = await new AxePuppeteer(page).analyze();
+
           const formatted_audit = this.format_audit(audit);
 
           const report = await this.report_model.create(formatted_audit);
@@ -50,29 +51,28 @@ export class PuppeteerService {
   format_audit(report: AxeResults) {
     const { inapplicable, incomplete, passes, violations } = report;
 
-    const formatted_report = [];
+    const [formatted_inapplicable, formatted_incomplete] = [
+      inapplicable,
+      incomplete,
+    ].map((results) => {
+      return results.map(({ id, description, tags }) => {
+        return { id, description, tags };
+      });
+    });
 
-    formatted_report.push(
-      [inapplicable, incomplete].map((results) => {
-        return results.map(({ id, description, tags }) => {
-          return { id, description, tags };
-        });
-      }),
-    );
-
-    formatted_report.push(
-      [passes, violations].map((results) => {
+    const [formatted_passes, formatted_violations] = [passes, violations].map(
+      (results) => {
         return results.map(({ id, description, nodes, tags, impact }) => {
           return { id, description, nodes, tags, impact };
         });
-      }),
+      },
     );
 
     return {
-      inapplicable: formatted_report[0],
-      incomplete: formatted_report[1],
-      passes: formatted_report[2],
-      violations: formatted_report[3],
+      inapplicable: formatted_inapplicable,
+      incomplete: formatted_incomplete,
+      passes: formatted_passes,
+      violations: formatted_violations,
     };
   }
 }

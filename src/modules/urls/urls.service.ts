@@ -30,7 +30,7 @@ export class UrlsService {
       { populate: 'urls' },
     );
 
-    if (collection.urls.length) {
+    if (collection?.urls?.length) {
       return collection.urls;
     }
 
