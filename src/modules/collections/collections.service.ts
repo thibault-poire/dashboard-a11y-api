@@ -12,6 +12,7 @@ import { FilterService } from 'src/shared/services/filter.service';
 import { CreateBodyDto } from './dto/create-body.dto';
 import { DeleteParamsDto } from './dto/delete-params.dto';
 import { GetQueryparamsDto } from './dto/get-queryparams.dto';
+import { GetParamsDto } from './dto/get-params.dto';
 
 @Injectable()
 export class CollectionsService {
@@ -52,6 +53,25 @@ export class CollectionsService {
 
     if (collections?.length) {
       return collections;
+    }
+
+    throw new NotFoundException();
+  }
+
+  async get_one(
+    { collection_id }: GetParamsDto,
+    queryparams: GetQueryparamsDto,
+  ) {
+    const filter_options = this.filter_service.get_filters(queryparams);
+
+    const collection = await this.collection_model.findById(
+      collection_id,
+      {},
+      filter_options,
+    );
+
+    if (collection) {
+      return collection;
     }
 
     throw new NotFoundException();

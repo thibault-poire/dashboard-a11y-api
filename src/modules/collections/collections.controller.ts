@@ -14,8 +14,9 @@ import { CollectionsService } from './collections.service';
 
 import { MongooseExceptionFilter } from 'src/shared/filters/mongoose-exception.filter';
 
-import { DeleteParamsDto } from './dto/delete-params.dto';
 import { CreateBodyDto } from './dto/create-body.dto';
+import { DeleteParamsDto } from './dto/delete-params.dto';
+import { GetParamsDto } from './dto/get-params.dto';
 import { GetQueryparamsDto } from './dto/get-queryparams.dto';
 
 @Controller()
@@ -33,6 +34,14 @@ export class CollectionsController {
   @HttpCode(204)
   delete_collection(@Param() params: DeleteParamsDto) {
     return this.collections_service.delete_one(params);
+  }
+
+  @Get(':collection_id')
+  get_collection(
+    @Param() params: GetParamsDto,
+    @Query() queryparams: GetQueryparamsDto,
+  ) {
+    return this.collections_service.get_one(params, queryparams);
   }
 
   @Get()

@@ -1,6 +1,3 @@
-import { IsMongoId } from 'class-validator';
+import { GetParamsDto } from './get-params.dto';
 
-export class DeleteParamsDto {
-  @IsMongoId()
-  collection_id: string;
-}
+export class DeleteParamsDto extends GetParamsDto {}
